@@ -1,313 +1,416 @@
-import 'package:flutter/material.dart';
-import 'dart:html' as html;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Voz</title>
 
-void main() => runApp(const MiVozApp());
-
-class MiVozApp extends StatelessWidget {
-  const MiVozApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Mi Voz',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.teal,
-        ),
-        useMaterial3: true,
-      ),
-      home: const InicioMiVoz(),
-    );
-  }
-}
-
-class InicioMiVoz extends StatefulWidget {
-  const InicioMiVoz({super.key});
-
-  @override
-  State<InicioMiVoz> createState() => _InicioMiVozState();
-}
-
-class _InicioMiVozState extends State<InicioMiVoz> {
-  bool ingles = false;
-  final List<String> mensaje = [];
-
-  final Map<String, Map<String, List<List<String>>>> tableros = {
-    'needs': {
-      'es': [
-        ['💧', 'Quiero agua'],
-        ['🍎', 'Tengo hambre'],
-        ['🚽', 'Quiero ir al baño'],
-        ['🆘', 'Necesito ayuda'],
-        ['🤕', 'Me duele'],
-        ['🛑', 'Quiero parar'],
-        ['🥤', 'Quiero beber'],
-        ['😴', 'Quiero dormir'],
-      ],
-      'en': [
-        ['💧', 'I want water'],
-        ['🍎', 'I am hungry'],
-        ['🚽', 'I need the bathroom'],
-        ['🆘', 'I need help'],
-        ['🤕', 'It hurts'],
-        ['🛑', 'I want to stop'],
-        ['🥤', 'I want a drink'],
-        ['😴', 'I want to sleep'],
-      ],
-    },
-    'feelings': {
-      'es': [
-        ['😊', 'Estoy feliz'],
-        ['😢', 'Estoy triste'],
-        ['😡', 'Estoy enojado'],
-        ['😟', 'Tengo miedo'],
-        ['😴', 'Estoy cansado'],
-        ['🤫', 'Quiero silencio'],
-        ['🤗', 'Quiero un abrazo'],
-        ['😣', 'Me siento mal'],
-      ],
-      'en': [
-        ['😊', 'I am happy'],
-        ['😢', 'I am sad'],
-        ['😡', 'I am angry'],
-        ['😟', 'I am scared'],
-        ['😴', 'I am tired'],
-        ['🤫', 'I want quiet'],
-        ['🤗', 'I want a hug'],
-        ['😣', 'I feel unwell'],
-      ],
-    },
-    'activities': {
-      'es': [
-        ['🎮', 'Quiero jugar'],
-        ['📚', 'Quiero leer'],
-        ['🎵', 'Quiero música'],
-        ['🏠', 'Quiero ir a casa'],
-        ['🚶', 'Quiero caminar'],
-        ['🛋️', 'Quiero descansar'],
-        ['👩', 'Quiero a mamá'],
-        ['👋', 'Quiero saludar'],
-      ],
-      'en': [
-        ['🎮', 'I want to play'],
-        ['📚', 'I want to read'],
-        ['🎵', 'I want music'],
-        ['🏠', 'I want to go home'],
-        ['🚶', 'I want to walk'],
-        ['🛋️', 'I want to rest'],
-        ['👩', 'I want my mom'],
-        ['👋', 'I want to say hello'],
-      ],
-    },
-    'choices': {
-      'es': [
-        ['👍', 'Sí'],
-        ['👎', 'No'],
-        ['✋', 'Espera'],
-        ['🔁', 'Otra vez'],
-        ['🙅', 'No quiero'],
-        ['💬', 'Quiero hablar'],
-      ],
-      'en': [
-        ['👍', 'Yes'],
-        ['👎', 'No'],
-        ['✋', 'Wait'],
-        ['🔁', 'Again'],
-        ['🙅', 'I do not want to'],
-        ['💬', 'I want to talk'],
-      ],
-    },
-  };
-
-  String categoria = 'needs';
-
-  void hablar(String texto) {
-    try {
-      final voz = html.SpeechSynthesisUtterance(texto);
-      voz.lang = ingles ? 'en-US' : 'es-US';
-      voz.rate = 0.85;
-      html.window.speechSynthesis?.cancel();
-      html.window.speechSynthesis?.speak(voz);
-    } catch (e) {
-      // La voz depende de la compatibilidad del navegador.
+  <style>
+    * {
+      box-sizing: border-box;
     }
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    final idioma = ingles ? 'en' : 'es';
-    final titulos = ingles
-        ? {
-            'needs': 'Needs',
-            'feelings': 'Feelings',
-            'activities': 'Activities',
-            'choices': 'Yes / No',
-          }
-        : {
-            'needs': 'Necesidades',
-            'feelings': 'Emociones',
-            'activities': 'Actividades',
-            'choices': 'Sí / No',
-          };
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f7faf9;
+      color: #204d36;
+    }
 
-    final items = tableros[categoria]![idioma]!;
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: #d8f3e6;
+    }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Mi Voz 💙',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              setState(() {
-                ingles = !ingles;
-                mensaje.clear();
-              });
-            },
-            child: Text(ingles ? 'ES' : 'EN'),
-          ),
+    h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    #languageButton {
+      border: 2px solid #087f6b;
+      border-radius: 10px;
+      background: white;
+      color: #087f6b;
+      padding: 8px 14px;
+      font-weight: bold;
+    }
+
+    main {
+      max-width: 760px;
+      margin: auto;
+      padding: 14px;
+    }
+
+    #question {
+      text-align: center;
+      font-size: 21px;
+      font-weight: bold;
+    }
+
+    .categories {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 8px 0 16px;
+    }
+
+    .category {
+      flex: 0 0 auto;
+      border: 1px solid #9acbbb;
+      border-radius: 20px;
+      background: white;
+      padding: 9px 14px;
+    }
+
+    .category.active {
+      background: #087f6b;
+      color: white;
+    }
+
+    #board {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .card {
+      min-height: 130px;
+      border: none;
+      border-radius: 18px;
+      background: #e4f4ea;
+      color: #204d36;
+      padding: 10px;
+      box-shadow: 0 3px 8px #00000012;
+    }
+
+    .emoji {
+      display: block;
+      font-size: 42px;
+      margin-bottom: 8px;
+    }
+
+    .cardText {
+      display: block;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .messageBox {
+      margin-top: 16px;
+      padding: 16px;
+      background: #dff5ef;
+      border-radius: 18px;
+      text-align: center;
+    }
+
+    #messageTitle {
+      font-weight: bold;
+    }
+
+    #message {
+      min-height: 45px;
+      margin: 10px 0;
+      font-size: 19px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .control {
+      border: 1px solid #087f6b;
+      border-radius: 12px;
+      background: white;
+      color: #087f6b;
+      padding: 10px 14px;
+      font-weight: bold;
+    }
+
+    .speak {
+      background: #087f6b;
+      color: white;
+    }
+
+    button:focus {
+      outline: 4px solid #f1b24a;
+      outline-offset: 2px;
+    }
+
+    @media (min-width: 650px) {
+      #board {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Mi Voz 💙</h1>
+    <button id="languageButton" onclick="changeLanguage()">EN</button>
+  </header>
+
+  <main>
+    <p id="question">¿Qué quieres comunicar?</p>
+
+    <nav id="categories" class="categories"></nav>
+
+    <section id="board"></section>
+
+    <section class="messageBox">
+      <div id="messageTitle">MI MENSAJE</div>
+      <div id="message">Elige una imagen</div>
+
+      <div class="controls">
+        <button id="undoButton" class="control" onclick="undo()">
+          Deshacer
+        </button>
+
+        <button id="speakButton" class="control speak" onclick="speakMessage()">
+          🔊 Hablar
+        </button>
+
+        <button id="clearButton" class="control" onclick="clearMessage()">
+          Borrar
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const boards = {
+      needs: {
+        es: [
+          ["💧", "Quiero agua"],
+          ["🍎", "Tengo hambre"],
+          ["🚽", "Quiero ir al baño"],
+          ["🆘", "Necesito ayuda"],
+          ["🤕", "Me duele"],
+          ["🛑", "Quiero parar"],
+          ["🥤", "Quiero beber"],
+          ["😴", "Quiero dormir"]
         ],
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Text(
-                ingles
-                    ? 'What would you like to say?'
-                    : '¿Qué quieres comunicar?',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: tableros.keys.map((key) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 3),
-                    child: ChoiceChip(
-                      label: Text(titulos[key]!),
-                      selected: categoria == key,
-                      onSelected: (_) {
-                        setState(() => categoria = key);
-                      },
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.all(10),
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 1.05,
-                ),
-                itemCount: items.length,
-                itemBuilder: (context, i) {
-                  return ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFE4F4EA),
-                      foregroundColor: const Color(0xFF204D36),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                      padding: const EdgeInsets.all(8),
-                    ),
-                    onPressed: () {
-                      setState(() => mensaje.add(items[i][1]));
-                      hablar(items[i][1]);
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          items[i][0],
-                          style: const TextStyle(fontSize: 38),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          items[i][1],
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              color: Colors.teal.shade50,
-              child: Column(
-                children: [
-                  Text(
-                    ingles ? 'MY MESSAGE' : 'MI MENSAJE',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    mensaje.isEmpty
-                        ? (ingles
-                            ? 'Choose a picture'
-                            : 'Elige una imagen')
-                        : mensaje.join(' '),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 8,
-                    children: [
-                      OutlinedButton(
-                        onPressed: mensaje.isEmpty
-                            ? null
-                            : () {
-                                setState(() => mensaje.removeLast());
-                              },
-                        child: Text(ingles ? 'Undo' : 'Deshacer'),
-                      ),
-                      ElevatedButton.icon(
-                        onPressed: mensaje.isEmpty
-                            ? null
-                            : () => hablar(mensaje.join(' ')),
-                        icon: const Icon(Icons.volume_up),
-                        label: Text(ingles ? 'Speak' : 'Hablar'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          html.window.speechSynthesis?.cancel();
-                          setState(() => mensaje.clear());
-                        },
-                        child: Text(ingles ? 'Clear' : 'Borrar'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+        en: [
+          ["💧", "I want water"],
+          ["🍎", "I am hungry"],
+          ["🚽", "I need the bathroom"],
+          ["🆘", "I need help"],
+          ["🤕", "It hurts"],
+          ["🛑", "I want to stop"],
+          ["🥤", "I want a drink"],
+          ["😴", "I want to sleep"]
+        ]
+      },
+
+      feelings: {
+        es: [
+          ["😊", "Estoy feliz"],
+          ["😢", "Estoy triste"],
+          ["😡", "Estoy enojado"],
+          ["😟", "Tengo miedo"],
+          ["😴", "Estoy cansado"],
+          ["🤫", "Quiero silencio"],
+          ["🤗", "Quiero un abrazo"],
+          ["😣", "Me siento mal"]
+        ],
+        en: [
+          ["😊", "I am happy"],
+          ["😢", "I am sad"],
+          ["😡", "I am angry"],
+          ["😟", "I am scared"],
+          ["😴", "I am tired"],
+          ["🤫", "I want quiet"],
+          ["🤗", "I want a hug"],
+          ["😣", "I feel unwell"]
+        ]
+      },
+
+      activities: {
+        es: [
+          ["🎮", "Quiero jugar"],
+          ["📚", "Quiero leer"],
+          ["🎵", "Quiero música"],
+          ["🏠", "Quiero ir a casa"],
+          ["🚶", "Quiero caminar"],
+          ["🛋️", "Quiero descansar"],
+          ["👩", "Quiero a mamá"],
+          ["👋", "Quiero saludar"]
+        ],
+        en: [
+          ["🎮", "I want to play"],
+          ["📚", "I want to read"],
+          ["🎵", "I want music"],
+          ["🏠", "I want to go home"],
+          ["🚶", "I want to walk"],
+          ["🛋️", "I want to rest"],
+          ["👩", "I want my mom"],
+          ["👋", "I want to say hello"]
+        ]
+      },
+
+      choices: {
+        es: [
+          ["👍", "Sí"],
+          ["👎", "No"],
+          ["✋", "Espera"],
+          ["🔁", "Otra vez"],
+          ["🙅", "No quiero"],
+          ["💬", "Quiero hablar"]
+        ],
+        en: [
+          ["👍", "Yes"],
+          ["👎", "No"],
+          ["✋", "Wait"],
+          ["🔁", "Again"],
+          ["🙅", "I do not want to"],
+          ["💬", "I want to talk"]
+        ]
+      }
+    };
+
+    const titles = {
+      es: {
+        needs: "Necesidades",
+        feelings: "Emociones",
+        activities: "Actividades",
+        choices: "Sí / No"
+      },
+      en: {
+        needs: "Needs",
+        feelings: "Feelings",
+        activities: "Activities",
+        choices: "Yes / No"
+      }
+    };
+
+    let language = "es";
+    let category = "needs";
+    let messageParts = [];
+
+    function render() {
+      document.documentElement.lang = language;
+
+      document.getElementById("languageButton").textContent =
+        language === "es" ? "EN" : "ES";
+
+      document.getElementById("question").textContent =
+        language === "es"
+          ? "¿Qué quieres comunicar?"
+          : "What would you like to say?";
+
+      document.getElementById("messageTitle").textContent =
+        language === "es" ? "MI MENSAJE" : "MY MESSAGE";
+
+      document.getElementById("undoButton").textContent =
+        language === "es" ? "Deshacer" : "Undo";
+
+      document.getElementById("speakButton").textContent =
+        language === "es" ? "🔊 Hablar" : "🔊 Speak";
+
+      document.getElementById("clearButton").textContent =
+        language === "es" ? "Borrar" : "Clear";
+
+      const categories = document.getElementById("categories");
+      categories.innerHTML = "";
+
+      Object.keys(boards).forEach(key => {
+        const button = document.createElement("button");
+        button.className =
+          "category" + (category === key ? " active" : "");
+        button.textContent = titles[language][key];
+
+        button.onclick = () => {
+          category = key;
+          render();
+        };
+
+        categories.appendChild(button);
+      });
+
+      const board = document.getElementById("board");
+      board.innerHTML = "";
+
+      boards[category][language].forEach(item => {
+        const button = document.createElement("button");
+        button.className = "card";
+
+        button.innerHTML = `
+          <span class="emoji">${item[0]}</span>
+          <span class="cardText">${item[1]}</span>
+        `;
+
+        button.onclick = () => addMessage(item[1]);
+        board.appendChild(button);
+      });
+
+      updateMessage();
+    }
+
+    function addMessage(text) {
+      messageParts.push(text);
+      updateMessage();
+      speak(text);
+    }
+
+    function updateMessage() {
+      document.getElementById("message").textContent =
+        messageParts.length
+          ? messageParts.join(" ")
+          : language === "es"
+            ? "Elige una imagen"
+            : "Choose a picture";
+    }
+
+    function speak(text) {
+      if (!("speechSynthesis" in window)) {
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      const voice = new SpeechSynthesisUtterance(text);
+      voice.lang = language === "es" ? "es-US" : "en-US";
+      voice.rate = 0.85;
+
+      window.speechSynthesis.speak(voice);
+    }
+
+    function speakMessage() {
+      if (messageParts.length) {
+        speak(messageParts.join(" "));
+      }
+    }
+
+    function undo() {
+      messageParts.pop();
+      updateMessage();
+    }
+
+    function clearMessage() {
+      window.speechSynthesis?.cancel();
+      messageParts = [];
+      updateMessage();
+    }
+
+    function changeLanguage() {
+      language = language === "es" ? "en" : "es";
+      messageParts = [];
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>

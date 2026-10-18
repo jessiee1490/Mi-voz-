@@ -1,0 +1,313 @@
+import 'package:flutter/material.dart';
+import 'dart:html' as html;
+
+void main() => runApp(const MiVozApp());
+
+class MiVozApp extends StatelessWidget {
+  const MiVozApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Mi Voz',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.teal,
+        ),
+        useMaterial3: true,
+      ),
+      home: const InicioMiVoz(),
+    );
+  }
+}
+
+class InicioMiVoz extends StatefulWidget {
+  const InicioMiVoz({super.key});
+
+  @override
+  State<InicioMiVoz> createState() => _InicioMiVozState();
+}
+
+class _InicioMiVozState extends State<InicioMiVoz> {
+  bool ingles = false;
+  final List<String> mensaje = [];
+
+  final Map<String, Map<String, List<List<String>>>> tableros = {
+    'needs': {
+      'es': [
+        ['💧', 'Quiero agua'],
+        ['🍎', 'Tengo hambre'],
+        ['🚽', 'Quiero ir al baño'],
+        ['🆘', 'Necesito ayuda'],
+        ['🤕', 'Me duele'],
+        ['🛑', 'Quiero parar'],
+        ['🥤', 'Quiero beber'],
+        ['😴', 'Quiero dormir'],
+      ],
+      'en': [
+        ['💧', 'I want water'],
+        ['🍎', 'I am hungry'],
+        ['🚽', 'I need the bathroom'],
+        ['🆘', 'I need help'],
+        ['🤕', 'It hurts'],
+        ['🛑', 'I want to stop'],
+        ['🥤', 'I want a drink'],
+        ['😴', 'I want to sleep'],
+      ],
+    },
+    'feelings': {
+      'es': [
+        ['😊', 'Estoy feliz'],
+        ['😢', 'Estoy triste'],
+        ['😡', 'Estoy enojado'],
+        ['😟', 'Tengo miedo'],
+        ['😴', 'Estoy cansado'],
+        ['🤫', 'Quiero silencio'],
+        ['🤗', 'Quiero un abrazo'],
+        ['😣', 'Me siento mal'],
+      ],
+      'en': [
+        ['😊', 'I am happy'],
+        ['😢', 'I am sad'],
+        ['😡', 'I am angry'],
+        ['😟', 'I am scared'],
+        ['😴', 'I am tired'],
+        ['🤫', 'I want quiet'],
+        ['🤗', 'I want a hug'],
+        ['😣', 'I feel unwell'],
+      ],
+    },
+    'activities': {
+      'es': [
+        ['🎮', 'Quiero jugar'],
+        ['📚', 'Quiero leer'],
+        ['🎵', 'Quiero música'],
+        ['🏠', 'Quiero ir a casa'],
+        ['🚶', 'Quiero caminar'],
+        ['🛋️', 'Quiero descansar'],
+        ['👩', 'Quiero a mamá'],
+        ['👋', 'Quiero saludar'],
+      ],
+      'en': [
+        ['🎮', 'I want to play'],
+        ['📚', 'I want to read'],
+        ['🎵', 'I want music'],
+        ['🏠', 'I want to go home'],
+        ['🚶', 'I want to walk'],
+        ['🛋️', 'I want to rest'],
+        ['👩', 'I want my mom'],
+        ['👋', 'I want to say hello'],
+      ],
+    },
+    'choices': {
+      'es': [
+        ['👍', 'Sí'],
+        ['👎', 'No'],
+        ['✋', 'Espera'],
+        ['🔁', 'Otra vez'],
+        ['🙅', 'No quiero'],
+        ['💬', 'Quiero hablar'],
+      ],
+      'en': [
+        ['👍', 'Yes'],
+        ['👎', 'No'],
+        ['✋', 'Wait'],
+        ['🔁', 'Again'],
+        ['🙅', 'I do not want to'],
+        ['💬', 'I want to talk'],
+      ],
+    },
+  };
+
+  String categoria = 'needs';
+
+  void hablar(String texto) {
+    try {
+      final voz = html.SpeechSynthesisUtterance(texto);
+      voz.lang = ingles ? 'en-US' : 'es-US';
+      voz.rate = 0.85;
+      html.window.speechSynthesis?.cancel();
+      html.window.speechSynthesis?.speak(voz);
+    } catch (e) {
+      // La voz depende de la compatibilidad del navegador.
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final idioma = ingles ? 'en' : 'es';
+    final titulos = ingles
+        ? {
+            'needs': 'Needs',
+            'feelings': 'Feelings',
+            'activities': 'Activities',
+            'choices': 'Yes / No',
+          }
+        : {
+            'needs': 'Necesidades',
+            'feelings': 'Emociones',
+            'activities': 'Actividades',
+            'choices': 'Sí / No',
+          };
+
+    final items = tableros[categoria]![idioma]!;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Mi Voz 💙',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              setState(() {
+                ingles = !ingles;
+                mensaje.clear();
+              });
+            },
+            child: Text(ingles ? 'ES' : 'EN'),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(
+                ingles
+                    ? 'What would you like to say?'
+                    : '¿Qué quieres comunicar?',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: tableros.keys.map((key) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 3),
+                    child: ChoiceChip(
+                      label: Text(titulos[key]!),
+                      selected: categoria == key,
+                      onSelected: (_) {
+                        setState(() => categoria = key);
+                      },
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.all(10),
+                gridDelegate:
+                    const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 1.05,
+                ),
+                itemCount: items.length,
+                itemBuilder: (context, i) {
+                  return ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFE4F4EA),
+                      foregroundColor: const Color(0xFF204D36),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      padding: const EdgeInsets.all(8),
+                    ),
+                    onPressed: () {
+                      setState(() => mensaje.add(items[i][1]));
+                      hablar(items[i][1]);
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          items[i][0],
+                          style: const TextStyle(fontSize: 38),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          items[i][1],
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              color: Colors.teal.shade50,
+              child: Column(
+                children: [
+                  Text(
+                    ingles ? 'MY MESSAGE' : 'MI MENSAJE',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    mensaje.isEmpty
+                        ? (ingles
+                            ? 'Choose a picture'
+                            : 'Elige una imagen')
+                        : mensaje.join(' '),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    children: [
+                      OutlinedButton(
+                        onPressed: mensaje.isEmpty
+                            ? null
+                            : () {
+                                setState(() => mensaje.removeLast());
+                              },
+                        child: Text(ingles ? 'Undo' : 'Deshacer'),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: mensaje.isEmpty
+                            ? null
+                            : () => hablar(mensaje.join(' ')),
+                        icon: const Icon(Icons.volume_up),
+                        label: Text(ingles ? 'Speak' : 'Hablar'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          html.window.speechSynthesis?.cancel();
+                          setState(() => mensaje.clear());
+                        },
+                        child: Text(ingles ? 'Clear' : 'Borrar'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
